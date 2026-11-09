@@ -1,0 +1,30 @@
+name: HTTP Security Headers Grader
+description: Grade the HTTP security headers (HSTS, CSP, framing, nosniff, cookies) of one or more URLs in CI. No dependencies, no external API.
+author: Excession Labs
+branding:
+  icon: shield
+  color: gray-dark
+inputs:
+  urls:
+    description: URLs to check, one per line. Any http or https URL, including localhost. Lines starting with # are skipped.
+    required: true
+  fail-on:
+    description: When to fail the step. fail = any failed check or unreachable URL. warn = also any warning. none = never fail.
+    required: false
+    default: fail
+  timeout:
+    description: Seconds to wait for each request (1 to 60).
+    required: false
+    default: "8"
+  ignore:
+    description: Check ids to leave out, separated by commas or spaces. Ids are https, hsts, csp, framing, nosniff, referrer, permissions, coop, leaks, cors, xxss, cookies.
+    required: false
+    default: ""
+outputs:
+  summary:
+    description: JSON with the overall result, totals and the full result of every check for every URL.
+  result:
+    description: Overall result, one of pass, warn or fail.
+runs:
+  using: node24
+  main: src/index.js

@@ -1,0 +1,8 @@
+{
+  "name": "security-headers-action",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GitHub Action that grades HTTP security headers in CI",
+  "license": "MIT",
+  "scripts": { "test": "node --test test/*.test.js" }
+}
