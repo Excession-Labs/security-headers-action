@@ -1,0 +1,38 @@
+name: self-test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  self-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run the action against example.com
+        id: headers
+        uses: ./
+        with:
+          urls: |
+            https://example.com
+          fail-on: none
+      - name: Check the outputs
+        env:
+          SUMMARY: ${{ steps.headers.outputs.summary }}
+          RESULT: ${{ steps.headers.outputs.result }}
+        run: |
+          echo "result=$RESULT"
+          echo "$SUMMARY" | jq -e '.totals.urls == 1 and (.results[0].checks | length) > 5'
+          test -n "$RESULT"
+      - name: fail-on=fail must fail a URL that sets almost no headers
+        id: strict
+        continue-on-error: true
+        uses: ./
+        with:
+          urls: https://example.com
+          fail-on: fail
+      - name: The strict step must have failed
+        run: test "${{ steps.strict.outcome }}" = "failure"
